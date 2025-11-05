@@ -513,7 +513,21 @@ if submitted:
         probs = model.predict_proba(user_data)[0]
         crops = model.classes_
         crop_probs = sorted(list(zip(crops, probs)), key=lambda x: x[1], reverse=True)
-        top3 = crop_probs[:3]
+
+# 🎯 Filter predictions by season
+        valid_crops_by_season = {
+            "Kharif": ["Cotton", "Soybean", "Tur", "Jowar", "Rice", "Maize", "Groundnut"],
+            "Rabi": ["Wheat", "Gram", "Jowar", "Tur"],
+            "Zaid": ["Maize", "Groundnut", "Sugarcane"]
+        }
+
+        valid_crops = valid_crops_by_season.get(season, [])
+        filtered_top3 = [(crop, prob) for crop, prob in crop_probs if crop in valid_crops]
+
+        if not filtered_top3:
+            filtered_top3 = crop_probs[:3]
+
+        top3 = filtered_top3[:3]
 
         # Scale probabilities into readable match %
         raw_vals = [p for _, p in top3]
