@@ -1,26 +1,8 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import os
-import gzip
-import shutil
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-
-# -----------------------------------------------------
-# 🔹 Function to compress .pkl file under 25 MB
-# -----------------------------------------------------
-def compress_pickle(input_path, target_size_mb=25):
-    temp_path = input_path + ".gz"
-    with open(input_path, "rb") as f_in:
-        with gzip.open(temp_path, "wb", compresslevel=9) as f_out:
-            shutil.copyfileobj(f_in, f_out)
-    compressed_size = os.path.getsize(temp_path) / (1024 * 1024)
-    if compressed_size <= target_size_mb:
-        os.remove(input_path)
-        os.rename(temp_path, input_path)
-    else:
-        os.remove(temp_path)
 
 # -----------------------------------------------------
 # 🔹 Train and Save Model
@@ -608,5 +590,6 @@ if submitted:
 
     except Exception as e:
         st.error(f"⚠️ Error: {e}")
+
 
 
